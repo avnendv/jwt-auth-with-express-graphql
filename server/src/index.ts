@@ -7,8 +7,10 @@ import { buildSchema } from 'type-graphql'
 import { ApolloServerPluginDrainHttpServer, ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core'
 
 import { GreetingResolver } from '@/resolvers/greeting'
+import { UserResolver } from '@/resolvers/user'
 import { PORT, PORT_CLIENT } from '@/config/env'
-import { AppDataSource } from './config/database'
+import { AppDataSource } from '@/config/database'
+import refreshTokenRouter from '@/routes/refreshTokenRouter'
 
 // create and setup express app
 const main = async () => {
@@ -19,10 +21,12 @@ const main = async () => {
   app.use(express.json())
   app.use(cookieParser())
 
+  app.use('/refresh_token', refreshTokenRouter)
+
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
       validate: false,
-      resolvers: [GreetingResolver],
+      resolvers: [GreetingResolver, UserResolver],
     }),
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer: httpServer }),
