@@ -1,6 +1,7 @@
 import 'reflect-metadata'
 import express, { Express } from 'express'
 import http from 'http'
+import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import { ApolloServer } from 'apollo-server-express'
 import { buildSchema } from 'type-graphql'
@@ -17,9 +18,11 @@ const main = async () => {
   const app: Express = express()
 
   const httpServer = http.createServer(app)
+  const whiteList = [`http://localhost:${PORT_CLIENT}`, `http://127.0.0.1:${PORT_CLIENT}`]
 
   app.use(express.json())
   app.use(cookieParser())
+  app.use(cors({ origin: whiteList, credentials: true }))
 
   app.use('/refresh_token', refreshTokenRouter)
 
@@ -48,7 +51,7 @@ const main = async () => {
       console.error('Error during Data Source initialization:', err)
     })
 
-  apolloServer.applyMiddleware({ app, cors: { origin: `http://localhost:${PORT_CLIENT}`, credentials: true } })
+  apolloServer.applyMiddleware({ app, cors: { origin: whiteList, credentials: true } })
 
   // start express server
   httpServer.listen(PORT, () => {

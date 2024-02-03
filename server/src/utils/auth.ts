@@ -11,7 +11,7 @@ export const createToken = (type: 'accessToken' | 'refreshToken', user: User) =>
     },
     type === 'accessToken' ? (ACCESS_TOKEN_SECRET as Secret) : (REFRESH_TOKEN_SECRET as Secret),
     {
-      expiresIn: type === 'accessToken' ? '15s' : '60m',
+      expiresIn: type === 'accessToken' ? '15m' : '60m',
     }
   )
 export const sendRefreshToken = (res: Response, user: User) => {
